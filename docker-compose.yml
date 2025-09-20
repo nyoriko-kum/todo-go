@@ -1,0 +1,36 @@
+services:
+    db:
+      image: postgres:16
+      container_name: todo-postgres
+      build:
+        context: postgresql
+
+      environment:
+        POSTGRES_USER: todo
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: todo
+
+      ports:
+      - "5432:5432"
+
+      volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+    app:
+       build: .
+       container_name: todo-app
+       ports:
+          - "8080:8080"
+       environment:
+          DB_HOST: db
+          DB_USER: todo
+          DB_PASSWORD: todo
+          DB_NAME: todo
+       depends_on:
+          - db
+       volumes:
+          - .:/app
+       command: go run main.go
+volumes:
+  postgres_data: 
